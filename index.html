@@ -1,10 +1,22 @@
 <!DOCTYPE>
 <html>
+	<header>
+		<meta charset="utf-8">
+		<style>
+			#resultContainer {
+				display: flex;
+				flex-direction: column;
+			}
+		</style>
+	</header>
 	<body>
-		<form>
-			<input>
-			<input>
-			<button>SEND</button>
+		<form id="myForm">
+			<div id="resultContainer">
+				<input type="text"  name="fio"   placeholder="ФИО">
+				<input type="email" name="emil"  placeholder="Email">
+				<input type="phone" name="phone" placeholder="Телефон">
+				<button type="submit" id="submitButton">Отправить</button>
+			</div>
 		</form>
 	</body>
 </html>
