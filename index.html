@@ -10,13 +10,77 @@
 		</style>
 	</header>
 	<body>
-		<form id="myForm">
+		<form id="myForm" method="GET" action="server">
 			<div id="resultContainer">
-				<input type="text"  name="fio"   placeholder="ФИО">
-				<input type="email" name="emil"  placeholder="Email">
-				<input type="phone" name="phone" placeholder="Телефон">
+				<input id="text" type="text"  name="fio"   placeholder="ФИО">
+				<input id="email" type="email" name="emil"  placeholder="Email">
+				<input id="phone" type="phone" name="phone" placeholder="Телефон">
 				<button type="submit" id="submitButton">Отправить</button>
 			</div>
 		</form>
 	</body>
+	<script>
+		document.getElementById("submitButton").onclick = function (e) {
+			document.getElementById("phone").value;
+			e.preventDefault();
+		};
+
+		function moderateName(name)
+		{
+			return null !== name.match(/^\S+\s+\S+\s+\S+$/);
+		}
+
+		console.log(moderateName("i i i"));
+		console.log(!moderateName(""));
+		console.log(!moderateName("i i i i"));
+		//console.log(!moderateName("i i i*"));
+
+
+		function moderateMail(mail) 
+		{
+			if(null === mail.match(/@/)) { // replace mailregex.ru
+				return false;
+			}
+
+			if (null === mail.match(/ya\.ru|yandex\.(ru|ua|by|kz|com)$/)) {
+				return false;
+			}
+
+			return true;
+		}
+
+		console.log(moderateMail("ESSch@yandex.ru"));
+		console.log(!moderateMail("mail.ya"));
+		console.log(!moderateMail(""));
+		console.log(!moderateMail("yandex.ru"));
+
+		function moderatePhone(phone) 
+		{
+			if(null === phone.match(/^\+7\(\d{3}\)\d{3}-\d{2}-\d{2}$/)) {
+				return false;
+			}
+
+			let digits = phone.match(/\d/g);
+			
+			if (null === digits) {
+				return false;
+			}
+
+			let sum = digits.reduce(function (sum, digit) {
+				return +sum + +digit;  
+			}, 0);
+
+			if (sum > 30) {
+				return false;
+			}
+
+			return true;
+		}
+		
+		console.log(moderatePhone("+7(111)111-11-11"));
+		console.log(!moderatePhone("+7(111)111-11-111"));
+		console.log(!moderatePhone("+7(333)334-22-33"));
+		console.log(!moderatePhone("+7(11a)334-22-33"));
+	</script>
+	<script src="index.js"></script>
 </html>
