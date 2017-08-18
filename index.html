@@ -7,12 +7,15 @@
 				display: flex;
 				flex-direction: column;
 			}
+			.error {
+				border: 1px solid red;
+			}
 		</style>
 	</header>
 	<body>
 		<form id="myForm" method="GET" action="server">
 			<div id="resultContainer">
-				<input id="text" type="text"  name="fio"   placeholder="ФИО">
+				<input id="name" type="text"  name="fio"   placeholder="ФИО">
 				<input id="email" type="email" name="emil"  placeholder="Email">
 				<input id="phone" type="phone" name="phone" placeholder="Телефон">
 				<button type="submit" id="submitButton">Отправить</button>
@@ -21,38 +24,49 @@
 	</body>
 	<script>
 		document.getElementById("submitButton").onclick = function (e) {
-			document.getElementById("phone").value;
+			["name", "email", "phone"].forEach(function (name) {
+				console.log("moderate" + name.charAt(0).toUpperCase() + name.substr(1));
+				if(!window["moderate" + name.charAt(0).toUpperCase() + name.substr(1)](phone.value)) {
+					field.className += " error";
+				}
+			});
+			document.getElementById("submitButton").disabled = true;
 			e.preventDefault();
 		};
 
 		function moderateName(name)
 		{
-			return null !== name.match(/^\S+\s+\S+\s+\S+$/);
+			return null !== name.match(/^\s*(\S+\s+){2}\S+\s*$/);
 		}
 
 		console.log(moderateName("i i i"));
+		console.log(moderateName(" i i i "));
+		console.log(moderateName("Штльц Евгений Сергеевич"));
 		console.log(!moderateName(""));
 		console.log(!moderateName("i i i i"));
 		//console.log(!moderateName("i i i*"));
 
 
-		function moderateMail(mail) 
+		function moderateEmail(mail) 
 		{
-			if(null === mail.match(/@/)) { // replace mailregex.ru
+			if(null === mail.match(/.+\@/)) { // replace mailregex.ru
 				return false;
 			}
 
-			if (null === mail.match(/ya\.ru|yandex\.(ru|ua|by|kz|com)$/)) {
+			if (null === mail.match(/(ya\.ru|yandex\.(ru|ua|by|kz|com))$/)) {
 				return false;
 			}
 
 			return true;
 		}
 
-		console.log(moderateMail("ESSch@yandex.ru"));
-		console.log(!moderateMail("mail.ya"));
-		console.log(!moderateMail(""));
-		console.log(!moderateMail("yandex.ru"));
+		console.log('MAIL');
+		console.log(moderateEmail("ESSch@yandex.ru"));
+		console.log(moderateEmail("ESSch@sub.yandex.ru"));
+		console.log(moderateEmail("ё@yandex.ru"));
+		console.log(!moderateEmail("mail.ya"));
+		console.log(!moderateEmail(""));
+		console.log(!moderateEmail("yandex.ru"));
 
 		function moderatePhone(phone) 
 		{
@@ -76,7 +90,7 @@
 
 			return true;
 		}
-		
+		console.log("phone");
 		console.log(moderatePhone("+7(111)111-11-11"));
 		console.log(!moderatePhone("+7(111)111-11-111"));
 		console.log(!moderatePhone("+7(333)334-22-33"));
