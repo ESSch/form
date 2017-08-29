@@ -1,4 +1,4 @@
-let form {
+let formView {
 	valid: function (name, status) {
 		let field = document.getElementsByTagName("name");
 		if (!status) {
@@ -54,15 +54,20 @@ let form {
 	}
 }
 
-eqObj({"status": "error", "reason": "noValidate"}, form.request("error.json"));
-eqObj({"status": "success"}, form.request("success.json"));
-eqObj({"status":"progress","timeout":4000}, form.request("progress.json"));
-form.request("progress.json");
+formView.request("error.json");
 setTimeout(2000);
-console.log('progress' == form.status);
+console.log('error' == formView.status);
+
+formView.request("success.json");
+setTimeout(2000);
+console.log('success' == formView.status);
+
+formView.request("progress.json");
+setTimeout(2000);
+console.log('progress' == formView.status);
 form.url = "success.json";
 setTimeout(3000);
-console.log('success' == form.status);
+console.log('success' == formView.status);
 
 let MyForm = {
 	form: {
