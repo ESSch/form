@@ -44,8 +44,9 @@ MyForm.setData({fio: "a b c", email: "ESSch@yandex.ru", phone: "+7(111)111-11-11
 eqObj({"isValid": true, "errorFields": []}, MyForm.validate());
 
 
-console.log("VALIDATE");
 
+console.log("VALIDATE");
+jjgggggddssssssssssss
 
 
 		document.getElementById("submitButton").onclick = function (e) {
