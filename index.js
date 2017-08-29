@@ -1,6 +1,72 @@
+let form {
+	valid: function (name, status) {
+		let field = document.getElementsByTagName("name");
+		if (!status) {
+			field.className += " error";
+		} else {
+			field.value = '';
+		}
+	}
+
+	use: function () {
+		document.getElementById("submitButton").disabled = true;
+	}
+
+	request: function (url) {
+		this.url = url;
+		/// todo ajax
+		return {"success"};
+	}
+
+	url: '';
+	status: '';
+	response: '';
+
+	showResult: function () {
+		if (typeof(response) != "object") {
+			return false;
+		}
+
+		let container = document.getElementById("resultContainer");
+
+		swith (this.response.status) {
+			case "success":
+				container.html = "Success";
+				container.className = this.response.status;
+				return true;
+				break;
+			case "error":
+				container.html = this.response.reason;
+				container.className = this.response.status;
+				return true;
+				break;
+			case "progress":
+				let timer = +this.response.timeout;
+				if (timer) {
+					// уброать вложенность
+					setTimeout(form.showResult, timer)
+					container.className = this.response.status;
+				}
+				break;
+		}
+
+		return false;
+	}
+}
+
+eqObj({"status": "error", "reason": "noValidate"}, form.request("error.json"));
+eqObj({"status": "success"}, form.request("success.json"));
+eqObj({"status":"progress","timeout":4000}, form.request("progress.json"));
+form.request("progress.json");
+setTimeout(2000);
+console.log('progress' == form.status);
+form.url = "success.json";
+setTimeout(3000);
+console.log('success' == form.status);
+
 let MyForm = {
 	form: {
-		fio: "", // to name
+		fio: "",
 		email: "", 
 		phone: ""
 	},
@@ -43,10 +109,7 @@ eqObj({"isValid": false, "errorFields": ["email", "phone"]}, MyForm.validate());
 MyForm.setData({fio: "a b c", email: "ESSch@yandex.ru", phone: "+7(111)111-11-11"});
 eqObj({"isValid": true, "errorFields": []}, MyForm.validate());
 
-
-
-console.log("VALIDATE");
-jjgggggddssssssssssss
+function
 
 
 		document.getElementById("submitButton").onclick = function (e) {
