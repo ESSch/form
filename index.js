@@ -1,26 +1,51 @@
-let formView {
+let formView = {
+
+	url: '',
+	status: '',
+	response: '',
+		fio: null,
+		email: null,
+		phone: null,
+
 	valid: function (name, status) {
-		let field = document.getElementsByTagName("name");
+		let field = this[name];
 		if (!status) {
 			field.className += " error";
 		} else {
 			field.value = '';
 		}
-	}
+	},
 
-	use: function () {
-		document.getElementById("submitButton").disabled = true;
-	}
+	send: function (e) {
+		let form = e.target.closest("form");
+		formView.fio = form.querySelector("input[name=fio]");
+		formView.email = form.querySelector("input[name=email]");
+		formView.phone = form.querySelector("input[name=phone]");
+
+		e.target.disabled = true;
+		formView.request("success.json");
+		formView.showResult();
+		formView.valid('phone', false);
+
+		return false;
+	},
 
 	request: function (url) {
-		this.url = url;
-		/// todo ajax
-		return {"success"};
-	}
-
-	url: '';
-	status: '';
-	response: '';
+		if(undefined != url) {
+			this.url = url;
+		}
+		var xhr = new XMLHttpRequest();
+		xhr.open('GET', this.url, false);
+		xhr.send();
+		if (xhr.status == 200) {
+			if("string" == typeof(xhr.response)) {
+				this.response = JSON.parse(xhr.response);
+				this.status = this.response.status
+			}
+		} else {
+			this.status = 'error'; 
+		}
+	},
 
 	showResult: function () {
 		if (typeof(response) != "object") {
@@ -29,7 +54,7 @@ let formView {
 
 		let container = document.getElementById("resultContainer");
 
-		swith (this.response.status) {
+		switch (this.response.status) {
 			case "success":
 				container.html = "Success";
 				container.className = this.response.status;
@@ -52,10 +77,13 @@ let formView {
 
 		return false;
 	}
-}
+};
+
+submitButton.onclick = formView.send;
 
 formView.request("error.json");
 setTimeout(2000);
+console.log(formView.status);
 console.log('error' == formView.status);
 
 formView.request("success.json");
@@ -65,10 +93,10 @@ console.log('success' == formView.status);
 formView.request("progress.json");
 setTimeout(2000);
 console.log('progress' == formView.status);
-form.url = "success.json";
+
 setTimeout(3000);
 console.log('success' == formView.status);
-
+/*
 let MyForm = {
 	form: {
 		fio: "",
@@ -188,3 +216,4 @@ function
 		console.log(!moderatePhone("+7(111)111-11-111"));
 		console.log(!moderatePhone("+7(333)334-22-33"));
 		console.log(!moderatePhone("+7(11a)334-22-33"));
+		*/
