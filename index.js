@@ -1,5 +1,4 @@
 let formView = {
-
 	url: '',
 	status: '',
 	response: '',
@@ -17,6 +16,7 @@ let formView = {
 	},
 
 	send: function (e) {
+        event.preventDefault ? event.preventDefault() : (event.returnValue = false);
 		let form = e.target.closest("form");
 		formView.fio = form.querySelector("input[name=fio]");
 		formView.email = form.querySelector("input[name=email]");
@@ -56,12 +56,12 @@ let formView = {
 
 		switch (this.response.status) {
 			case "success":
-				container.html = "Success";
+				container.innerHTML = "Success";
 				container.className = this.response.status;
 				return true;
 				break;
 			case "error":
-				container.html = this.response.reason;
+				container.innerHTML = this.response.reason;
 				container.className = this.response.status;
 				return true;
 				break;
@@ -79,7 +79,7 @@ let formView = {
 	}
 };
 
-submitButton.onclick = formView.send;
+document.getElementById('submitButton').onclick = formView.send;
 
 formView.request("error.json");
 setTimeout(2000);
@@ -90,12 +90,12 @@ formView.request("success.json");
 setTimeout(2000);
 console.log('success' == formView.status);
 
-formView.request("progress.json");
-setTimeout(2000);
-console.log('progress' == formView.status);
-
-setTimeout(3000);
-console.log('success' == formView.status);
+// formView.request("progress.json");
+// setTimeout(2000);
+// console.log('progress' == formView.status);
+//
+// setTimeout(3000);
+// console.log('success' == formView.status);
 /*
 let MyForm = {
 	form: {

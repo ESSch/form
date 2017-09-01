@@ -3,23 +3,44 @@
 	<header>
 		<meta charset="utf-8">
 		<style>
-			#resultContainer {
+			form {
 				display: flex;
 				flex-direction: column;
+				align-items: center;
 			}
+			form input, .result {
+				min-width: 300px;
+				margin: 5px;
+				text-align: center;
+			}
+			form button, form input, .result {
+				border: 1px solid #aaaaaa;
+			}
+			form input::placeholder {
+				text-align: center;
+			}
+
+			.result {
+				color: #aaaaaa;
+				min-height: 40px;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
+
 			.error {
 				border: 1px solid red;
 			}
 		</style>
 	</header>
 	<body>
-		<form id="myForm" method="GET" action="server">
-			<input id="name" type="text"  name="fio"   placeholder="ФИО">
-			<input id="email" type="email" name="emil"  placeholder="Email">
-			<input id="phone" type="phone" name="phone" placeholder="Телефон">
-			<button type="submit" id="submitButton">Отправить</button>
+		<form id="myForm" method="GET" action="success.json">
+			<input type="text"  name="fio"   placeholder="ФИО">
+			<input type="email" name="emil"  placeholder="Email">
+			<input type="tel" name="phone" placeholder="Телефон">
+			<button type="submit" id="submitButton" onclick="alert();">Отправить</button>
+			<div id="resultContainer" class="result">Форма ещё не отравлена</div>
 		</form>
-		<div id="resultContainer"></div>
 	</body>
 	<script src="index.js"></script>
 </html>
