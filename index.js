@@ -1,4 +1,4 @@
-var formView = {
+var MyForm = {
     url: '',
     status: '',
     response: '',
@@ -8,8 +8,8 @@ var formView = {
     form: null,
 
     valid: function (name, status) {
-        if (null !== this[name]) {
-            var field = this[name];
+        if (null !== MyForm[name]) {
+            var field = MyForm[name];
             if (!status) {
                 field.className = "error";
                 field.value = '';
@@ -19,43 +19,40 @@ var formView = {
         }
     },
 
-    // validate: function () {
-    //     fields = [];
-    //     for (var field in this.form) {
-    //         var bValid = !window["moderate" + field.charAt(0).toUpperCase() + field.substr(1)](this.form[field]);
-    //         if (bValid) {
-    //             fields.push(field);
-    //         }
-    //         console.log(field);
-    //     }
-    //     return {"isValid": fields.length == 0, "errorFields": fields};
-    // },
-
-    send: function (e) {
-        event.preventDefault ? event.preventDefault() : (event.returnValue = false);
-        var form =  e.target.closest("form");
-        formView.url = form.getAttribute("action");
-
-        var status = true;
+    validate: function () {
+        // var status = true;
         var fields = [];
         ["fio", "email", "phone"].forEach(function (name) {
-            formView[name] = form.querySelector("input[name=" + name + "]");
+            MyForm[name] = document.getElementById('myForm').querySelector("input[name=" + name + "]");
             var nameMethod = "moderate" + name.charAt(0).toUpperCase() + name.substr(1);
-            var value =  formView[name].value;
-            var bValid = window[nameMethod](value);
-            console.log(value);
-            console.log(bValid);
-            if (bValid) {
+            var value =  MyForm[name].value;
+            if (!window[nameMethod](value)) {
                 fields.push(name);
             }
-            status = status && bValid;
-            formView.valid(name, bValid);
         });
 
-        if (status) {
+        return {"isValid": fields.length == 0, "errorFields": fields};
+    },
+
+    submit: function () {
+        // this.getData();
+        // this.setData({"fio": 10});
+
+       var form = document.getElementById('myForm');
+        MyForm.url = form.getAttribute("action");
+        var validate = MyForm.validate();
+
+        ["fio", "email", "phone"].forEach(function (name) {
+            MyForm.valid(name, true);
+        });
+        validate.errorFields.forEach(function (name) {
+            MyForm.valid(name, false);
+        });
+
+        if (validate.isValid) {
             e.target.disabled = true;
-            formView.request(formView.url);
-            formView.showResult();
+            MyForm.request(MyForm.url);
+            MyForm.showResult();
         }
 
         return false;
@@ -105,8 +102,8 @@ var formView = {
                 if (timer) {
                     setTimeout(function () {
                         container.innerHTML = "Форма отравляется...";
-                        formView.request();
-                        formView.showResult();
+                        MyForm.request();
+                        MyForm.showResult();
                     }, timer);
                 }
                 return true;
@@ -114,57 +111,65 @@ var formView = {
         }
 
         return false;
-    }
-};
+    },
 
-document.getElementById('submitButton').onclick = formView.send;
-
-// formView.request("error.json");
-// setTimeout(2000);
-// console.log(formView.status);
-// console.log('error' == formView.status);
-//
-// formView.request("success.json");
-// setTimeout(2000);
-// console.log('success' == formView.status);
-//
-// formView.request("progress.json");
-// setTimeout(2000);
-// console.log('progress' == formView.status);
-//
-// setTimeout(3000);
-// console.log('success' == formView.status);
-var MyForm = {
-    view: formView,
-    form: {
+    data: {
         fio: "",
         email: "",
         phone: ""
     },
-    validate: function () {
-        fields = [];
-        for (var field in this.form) {
-            var bValid = !window["moderate" + field.charAt(0).toUpperCase() + field.substr(1)](this.form[field]);
-            if (bValid) {
-                fields.push(field);
+
+    init: function () {
+        if (!this.isInit) {
+            var form = document.getElementById('myForm');
+            for (var name in this.data) {
+                this.data[name] = form.querySelector("input[name=" + name + "]");
             }
-            console.log(field);
-            this.view.valid(field, false);
         }
-        return {"isValid": fields.length == 0, "errorFields": fields};
+        this.isInit;
     },
+
     getData: function () {
-        return this.form;
+        this.init();
+        var data = this.data;
+        for (var name in this.data) {
+            data[name] = this.data[name].value;
+        }
+        return data;
     },
+
     setData: function (data) {
-        this.form = data;
-    },
-    submit: function () {
-        // MyForm.validate();
+        this.init();
+        for (var name in this.data) {
+            if (undefined !== data[name]) {
+                this.data[name].value = data[name];
+            }
+        }
     }
 };
 
-MyForm.validate();
+document.getElementById('submitButton').onclick = function (event) {
+    event.preventDefault ? event.preventDefault() : (event.returnValue = false);
+    MyForm.submit();
+    return false;
+};
+
+// MyForm.request("error.json");
+// setTimeout(2000);
+// console.log(MyForm.status);
+// console.log('error' == MyForm.status);
+//
+// MyForm.request("success.json");
+// setTimeout(2000);
+// console.log('success' == MyForm.status);
+//
+// MyForm.request("progress.json");
+// setTimeout(2000);
+// console.log('progress' == MyForm.status);
+//
+// setTimeout(3000);
+// console.log('success' == MyForm.status);
+
 /*
  function eqObj(obj1, obj2) {
  b = (obj1.isValid == obj2.isValid);
@@ -208,11 +213,11 @@ function moderateFio(name) {
     return null !== name.match(/^\s*(\S+\s+){2}\S+\s*$/);
 }
 
-console.log(moderateFio("i i i"));
-console.log(moderateFio(" i i i "));
-console.log(moderateFio("Штльц Евгений Сергеевич"));
-console.log(!moderateFio(""));
-console.log(!moderateFio("i i i i"));
+// console.log(moderateFio("i i i"));
+// console.log(moderateFio(" i i i "));
+// console.log(moderateFio("Штльц Евгений Сергеевич"));
+// console.log(!moderateFio(""));
+// console.log(!moderateFio("i i i i"));
 //console.log(!moderateName("i i i"));
 
 function moderateEmail(mail) {
@@ -230,13 +235,13 @@ function moderateEmail(mail) {
     return true;
 }
 
-console.log('MAIL');
-console.log(moderateEmail("ESSch@yandex.ru"));
-console.log(moderateEmail("ESSch@sub.yandex.ru"));
-console.log(moderateEmail("ё@yandex.ru"));
-console.log(!moderateEmail("mail.ya"));
-console.log(!moderateEmail(""));
-console.log(!moderateEmail("yandex.ru"));
+// console.log('MAIL');
+// console.log(moderateEmail("ESSch@yandex.ru"));
+// console.log(moderateEmail("ESSch@sub.yandex.ru"));
+// console.log(moderateEmail("ё@yandex.ru"));
+// console.log(!moderateEmail("mail.ya"));
+// console.log(!moderateEmail(""));
+// console.log(!moderateEmail("yandex.ru"));
 
 function moderatePhone(phone) {
     if (undefined == phone) {
@@ -263,8 +268,8 @@ function moderatePhone(phone) {
 
     return true;
 }
-console.log("phone");
-console.log(moderatePhone("+7(111)111-11-11"));
-console.log(!moderatePhone("+7(111)111-11-111"));
-console.log(!moderatePhone("+7(333)334-22-33"));
-console.log(!moderatePhone("+7(11a)334-22-33"));
+// console.log("phone");
+// console.log(moderatePhone("+7(111)111-11-11"));
+// console.log(!moderatePhone("+7(111)111-11-111"));
+// console.log(!moderatePhone("+7(333)334-22-33"));
+// console.log(!moderatePhone("+7(11a)334-22-33"));
