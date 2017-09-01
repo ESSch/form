@@ -24,7 +24,7 @@ var formView = {
         formView.email = form.querySelector("input[name=email]");
         formView.phone = form.querySelector("input[name=phone]");
 
-        e.target.disabled = true;
+        // e.target.disabled = true;
         formView.request(formView.url);
         formView.showResult();
         // formView.valid('phone', false);
@@ -73,16 +73,13 @@ var formView = {
             case "progress":
                 container.innerHTML = "Форма не обработана, ожидайте...";
                 var timer = +this.response.timeout;
-                // if (timer) {
-                //     // no recurse
-                //     while (this.response.status == 'progress') {
-                //         setTimeout(function () {
-                //         }, timer);
-                //         container.innerHTML = "Форма отравляется...";
-                //         this.request();
-                //     }
-                //     this.showResult();
-                // }
+                if (timer) {
+                    setTimeout(function () {
+                        container.innerHTML = "Форма отравляется...";
+                        formView.request();
+                        formView.showResult();
+                    }, timer);
+                }
                 return true;
                 break;
         }
