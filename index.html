@@ -8,19 +8,19 @@
 				flex-direction: column;
 				align-items: center;
 			}
-			form input, .result {
+			form input, #resultContainer {
 				min-width: 300px;
 				margin: 5px;
 				text-align: center;
 			}
-			form button, form input, .result {
+			form button, form input, #resultContainer {
 				border: 1px solid #aaaaaa;
 			}
 			form input::placeholder {
 				text-align: center;
 			}
 
-			.result {
+			#resultContainer {
 				color: #aaaaaa;
 				min-height: 40px;
 				display: flex;
@@ -29,17 +29,25 @@
 			}
 
 			.error {
-				border: 1px solid red;
+				border: 1px solid red !important;
+			}
+
+			.success {
+				border: 1px solid green !important;
+			}
+
+			.progress {
+				border: 1px solid blue !important;
 			}
 		</style>
 	</header>
 	<body>
-		<form id="myForm" method="GET" action="success.json">
+		<form id="myForm" method="GET" action="error.json">
 			<input type="text"  name="fio"   placeholder="ФИО">
 			<input type="email" name="emil"  placeholder="Email">
 			<input type="tel" name="phone" placeholder="Телефон">
-			<button type="submit" id="submitButton" onclick="alert();">Отправить</button>
-			<div id="resultContainer" class="result">Форма ещё не отравлена</div>
+			<button type="submit" id="submitButton">Отправить</button>
+			<div id="resultContainer" class="result">Форма ещё не отравлена...</div>
 		</form>
 	</body>
 	<script src="index.js"></script>
