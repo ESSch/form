@@ -5,6 +5,7 @@ var formView = {
     fio: null,
     email: null,
     phone: null,
+    form: null,
 
     valid: function (name, status) {
         var field = this[name];
@@ -17,8 +18,7 @@ var formView = {
 
     send: function (e) {
         event.preventDefault ? event.preventDefault() : (event.returnValue = false);
-
-        var form = formView.form =  e.target.closest("form");
+        var form =  e.target.closest("form");
         formView.url = form.getAttribute("action");
         formView.fio = form.querySelector("input[name=fio]");
         formView.email = form.querySelector("input[name=email]");
@@ -27,7 +27,7 @@ var formView = {
         e.target.disabled = true;
         formView.request(formView.url);
         formView.showResult();
-        formView.valid('phone', false);
+        // formView.valid('phone', false);
 
         return false;
     },
@@ -39,14 +39,18 @@ var formView = {
         var xhr = new XMLHttpRequest();
         xhr.open('GET', this.url, false);
         xhr.send();
+
+        this.status = 'error';
         if ((undefined !== xhr.status) && (xhr.status == 200)) {
             if ("string" == typeof(xhr.response)) {
                 this.response = JSON.parse(xhr.response);
-                this.status = this.response.status
+                this.status = this.response.status;
+
+                return this.status;
             }
-        } else {
-            this.status = 'error';
         }
+
+        return this.status;
     },
 
     showResult: function () {
@@ -55,25 +59,31 @@ var formView = {
         }
 
         var container = document.getElementById("resultContainer");
+        container.className = this.response.status;
 
         switch (this.response.status) {
             case "success":
                 container.innerHTML = "Success";
-                container.className = this.response.status;
                 return true;
                 break;
             case "error":
                 container.innerHTML = this.response.reason;
-                container.className = this.response.status;
                 return true;
                 break;
             case "progress":
+                container.innerHTML = "Форма не обработана, ожидайте...";
                 var timer = +this.response.timeout;
-                if (timer) {
-                    // уброать вложенность
-                    setTimeout(form.showResult, timer)
-                    container.className = this.response.status;
-                }
+                // if (timer) {
+                //     // no recurse
+                //     while (this.response.status == 'progress') {
+                //         setTimeout(function () {
+                //         }, timer);
+                //         container.innerHTML = "Форма отравляется...";
+                //         this.request();
+                //     }
+                //     this.showResult();
+                // }
+                return true;
                 break;
         }
 
@@ -83,14 +93,14 @@ var formView = {
 
 document.getElementById('submitButton').onclick = formView.send;
 
-formView.request("error.json");
-setTimeout(2000);
-console.log(formView.status);
-console.log('error' == formView.status);
-
-formView.request("success.json");
-setTimeout(2000);
-console.log('success' == formView.status);
+// formView.request("error.json");
+// setTimeout(2000);
+// console.log(formView.status);
+// console.log('error' == formView.status);
+//
+// formView.request("success.json");
+// setTimeout(2000);
+// console.log('success' == formView.status);
 
 // formView.request("progress.json");
 // setTimeout(2000);
